@@ -341,7 +341,7 @@ void Window_c::generateCatalog_f()
             }
             else
             {
-                catalog_c catalogTmp(directoryTmp, catalogTemp.first, "xxhash");
+                catalog_c catalogTmp(QDir::toNativeSeparators(directoryTmp), catalogTemp.first, "xxhash");
                 QFile saveFile(saveFileName);
                 if (saveFile.open(QIODevice::WriteOnly))
                 {
