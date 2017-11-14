@@ -396,6 +396,10 @@ void Window_c::generateCatalog_f()
         funcGenerateCatalog->start();
         break;
     }
+    else
+    {
+        generating_pri = false;
+    }
 }
 
 //void browseFileDialogThread_c::run()
