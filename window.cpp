@@ -291,8 +291,6 @@ void Window_c::generateCatalog_f()
         directoryTmp = directoryComboBox_pri->currentText();
     }
 
-    generating_pri = true;
-
     QFileDialog saveDialogTmp;
     saveDialogTmp.setAcceptMode(QFileDialog::AcceptSave);
     saveDialogTmp.setFileMode(QFileDialog::AnyFile);
@@ -331,6 +329,7 @@ void Window_c::generateCatalog_f()
 
         threadedFunction_c* funcGenerateCatalog = new threadedFunction_c([=]
         {
+            generating_pri = true;
             auto catalogTemp(cataloguerP->catalogDirectory_f(directoryFI));
             saving_pri = true;
             generating_pri = false;
@@ -395,10 +394,6 @@ void Window_c::generateCatalog_f()
         QObject::connect(funcGenerateCatalog, &QThread::finished, cataloguerP, &QThread::deleteLater);
         funcGenerateCatalog->start();
         break;
-    }
-    else
-    {
-        generating_pri = false;
     }
 }
 
