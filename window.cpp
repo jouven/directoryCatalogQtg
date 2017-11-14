@@ -218,12 +218,13 @@ void Window_c::browseDirectory_f()
     selectFolderDialogTmp.setFileMode(QFileDialog::Directory);
     if (directoryComboBox_pri->count() > 0)
     {
-        selectFolderDialogTmp.setDirectory(directoryComboBox_pri->currentText());
+        selectFolderDialogTmp.setDirectory(QDir::fromNativeSeparators(directoryComboBox_pri->currentText()));
     }
     else
     {
         selectFolderDialogTmp.setDirectory(QDir::currentPath());
     }
+
     selectFolderDialogTmp.setWindowTitle(tr("Select folder"));
     selectFolderDialogTmp.setViewMode(QFileDialog::Detail);
     selectFolderDialogTmp.setFilter(QDir::Hidden | QDir::NoDotAndDotDot);
@@ -258,14 +259,16 @@ void Window_c::addDirectoryToCombobox_f(const QString& directory_par_con)
 //    {
 
 //    }
-    auto findResultIndex(directoryComboBox_pri->findText(directory_par_con));
+    QString nativeDirectoryTmp(QDir::toNativeSeparators(directory_par_con));
+    auto findResultIndex(directoryComboBox_pri->findText(nativeDirectoryTmp));
     if (findResultIndex > 0)
     {
         directoryComboBox_pri->removeItem(findResultIndex);
     }
-    directoryComboBox_pri->insertItem(0, directory_par_con);
+    directoryComboBox_pri->insertItem(0, nativeDirectoryTmp);
     directoryComboBox_pri->setCurrentIndex(0);
     //directoryComboBox_pri->setCurrentIndex(directoryComboBox_pri->findText(directory_par_con));
+
     //it's necessary to wait for the execution to return to the event loop before
     //it can adjustSize properly
     QTimer::singleShot(0,[=]
@@ -291,7 +294,7 @@ void Window_c::generateCatalog_f()
     }
     else
     {
-        directoryTmp = directoryComboBox_pri->currentText();
+        directoryTmp = QDir::fromNativeSeparators(directoryComboBox_pri->currentText());
     }
 
     QFileDialog saveDialogTmp;
