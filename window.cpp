@@ -365,7 +365,7 @@ void Window_c::generateCatalog_f()
             {
                 while (eines::signal::isRunning_f() and generating_pri)
                 {
-                    if (statusBarLabel_pri->text().startsWith("Cataloging... "))
+                    if (statusBarLabel_pri->text().startsWith("Cataloging..."))
                     {
                         statusBarLabel_pri->setText(tr("Cataloging.") + " "" "" " + cataloguerP->currentDirectory_f());
                         break;
@@ -388,14 +388,12 @@ void Window_c::generateCatalog_f()
             }
         });
 
+        QObject::connect(funcDisplayProgres, &QThread::finished, funcDisplayProgres, &QThread::deleteLater);
+        funcDisplayProgres->start();
 
         QObject::connect(funcGenerateCatalog, &QThread::finished, funcGenerateCatalog, &QThread::deleteLater);
         QObject::connect(funcGenerateCatalog, &QThread::finished, cataloguerP, &QThread::deleteLater);
         funcGenerateCatalog->start();
-
-        QObject::connect(funcDisplayProgres, &QThread::finished, funcDisplayProgres, &QThread::deleteLater);
-        funcDisplayProgres->start();
-
         break;
     }
 }
