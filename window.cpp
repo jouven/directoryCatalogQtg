@@ -329,7 +329,6 @@ void Window_c::generateCatalog_f()
 
         threadedFunction_c* funcGenerateCatalog = new threadedFunction_c([=]
         {
-            generating_pri = true;
             auto catalogTemp(cataloguerP->catalogDirectory_f(directoryFI));
             saving_pri = true;
             generating_pri = false;
@@ -364,6 +363,7 @@ void Window_c::generateCatalog_f()
             {
                 while (eines::signal::isRunning_f() and generating_pri)
                 {
+
                     if (statusBarLabel_pri->text().startsWith("Cataloging..."))
                     {
                         statusBarLabel_pri->setText(tr("Cataloging.") + " "" "" " + cataloguerP->currentDirectory_f());
@@ -386,6 +386,8 @@ void Window_c::generateCatalog_f()
                 QThread::msleep(500);
             }
         });
+
+        generating_pri = true;
 
         QObject::connect(funcDisplayProgres, &QThread::finished, funcDisplayProgres, &QThread::deleteLater);
         funcDisplayProgres->start();
