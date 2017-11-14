@@ -14,11 +14,15 @@ class catalogFile_c
     QString filename_pri;
     int_fast64_t fileSize_pri = 0;
     uint_fast64_t numericHash_pri = 0;
+    bool hashGenerated_pri = false;
     QString lastModifiedDateTime_pri;
 public:
     catalogFile_c(const QString& filename_par_con
                   , const int_fast64_t fileSize_par_con
                   , const uint_fast64_t numericHash_par_con
+                  , const QString& lastModifiedDateTime_par_con);
+    catalogFile_c(const QString& filename_par_con
+                  , const int_fast64_t fileSize_par_con
                   , const QString& lastModifiedDateTime_par_con);
     void write_f(QJsonObject &json) const;
 };
@@ -48,6 +52,7 @@ public:
     //source_par_con must exist and must be a directory otherwise the return value will be empty
     std::pair<std::vector<catalogFile_c>, bool> catalogDirectory_f(
             const QFileInfo& source_par_con
+            , const bool generateHash_par_con = true
             , const bool useRelativePaths_par_con = true
             , const bool includeSubdirectories_par_con = true
             , const QStringList& filenameFilters_par_con = QStringList()

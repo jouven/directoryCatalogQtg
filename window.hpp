@@ -9,6 +9,7 @@ class QComboBox;
 class QPushButton;
 class QLabel;
 class QVBoxLayout;
+class QCheckBox;
 
 //class browseFileDialogThread_c : public threadedFunction_c
 //{
@@ -35,6 +36,7 @@ class Window_c : public QWidget
     QPushButton* catalogButton_pri;
     QComboBox* directoryComboBox_pri;
     QLabel* statusBarLabel_pri;
+    QCheckBox* generateHash_pri;
 
     bool generating_pri = false;
     bool saving_pri = false;

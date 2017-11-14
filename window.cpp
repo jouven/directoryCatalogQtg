@@ -72,6 +72,9 @@ Window_c::Window_c()
     centralLayout->addWidget(catalogButton_pri, 1, 1);
     QObject::connect(catalogButton_pri, &QPushButton::clicked, this, &Window_c::generateCatalog_f);
 
+    generateHash_pri = new QCheckBox(tr("Generate hash (slower)"));
+    centralLayout->addWidget(generateHash_pri, 2, 0);
+
     this->setAcceptDrops(true);
 
     mainLayout_pri = new QVBoxLayout;
@@ -329,7 +332,7 @@ void Window_c::generateCatalog_f()
 
         threadedFunction_c* funcGenerateCatalog = new threadedFunction_c([=]
         {
-            auto catalogTemp(cataloguerP->catalogDirectory_f(directoryFI));
+            auto catalogTemp(cataloguerP->catalogDirectory_f(directoryFI, generateHash_pri->isChecked()));
             saving_pri = true;
             generating_pri = false;
             if (not catalogTemp.second)

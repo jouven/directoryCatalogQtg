@@ -19,6 +19,16 @@ catalogFile_c::catalogFile_c(const QString &filename_par_con
     : filename_pri(filename_par_con)
     , fileSize_pri(fileSize_par_con)
     , numericHash_pri(numericHash_par_con)
+    , hashGenerated_pri(true)
+    , lastModifiedDateTime_pri(lastModifiedDateTime_par_con)
+{}
+
+catalogFile_c::catalogFile_c(
+        const QString& filename_par_con
+        , const int_fast64_t fileSize_par_con
+        , const QString& lastModifiedDateTime_par_con)
+    : filename_pri(filename_par_con)
+    , fileSize_pri(fileSize_par_con)
     , lastModifiedDateTime_pri(lastModifiedDateTime_par_con)
 {}
 
@@ -28,7 +38,10 @@ void catalogFile_c::write_f(QJsonObject& json) const
     //json/javascript can't fit 64bit numbers, IEEE 754 shit, which is floating point, not integer, so it's less than a 64bit integer
     //so... use string notation
     json["size"] = QString::number(fileSize_pri);
-    json["hash"] = QString::number(numericHash_pri);
+    if (hashGenerated_pri)
+    {
+        json["hash"] = QString::number(numericHash_pri);
+    }
     json["lastModificationDatetime"] = lastModifiedDateTime_pri;
 }
 
@@ -53,8 +66,8 @@ void catalog_c::write_f(QJsonObject& json) const
     json["hashType"] = hashType_pri;
 }
 
-std::pair<std::vector<catalogFile_c>,bool> cataloguer_c::catalogDirectory_f(
-    const QFileInfo& source_par_con
+std::pair<std::vector<catalogFile_c>,bool> cataloguer_c::catalogDirectory_f(const QFileInfo& source_par_con
+    , const bool generateHash_par_con
     , const bool useRelativePaths_par_con
     , const bool includeSubdirectories_par_con
     , const QStringList& filenameFilters_par_con
@@ -105,14 +118,27 @@ std::pair<std::vector<catalogFile_c>,bool> cataloguer_c::catalogDirectory_f(
             QFileInfo sourceFileTmp(sourceDir.path() + '/' + filename_ite_con);
             if (sourceFileTmp.exists() and sourceFileTmp.isFile())
             {
-                catalogFile_c catalogFileTmp
-                (
-                      QDir::toNativeSeparators(sourceDir.relativeFilePath(sourceDir.path() + '/' + filename_ite_con))
-                      , sourceFileTmp.size()
-                      , getFileHash_f(sourceFileTmp.canonicalFilePath())
-                      , sourceFileTmp.lastModified().toString("yyyy-MM-dd HH:mm:ss")
-                );
-                result.emplace_back(catalogFileTmp);
+                if (generateHash_par_con)
+                {
+                    catalogFile_c catalogFileTmp
+                    (
+                        QDir::toNativeSeparators(sourceDir.relativeFilePath(sourceDir.path() + '/' + filename_ite_con))
+                        , sourceFileTmp.size()
+                        , getFileHash_f(sourceFileTmp.canonicalFilePath())
+                        , sourceFileTmp.lastModified().toString("yyyy-MM-dd HH:mm:ss")
+                    );
+                    result.emplace_back(catalogFileTmp);
+                }
+                else
+                {
+                    catalogFile_c catalogFileTmp
+                    (
+                        QDir::toNativeSeparators(sourceDir.relativeFilePath(sourceDir.path() + '/' + filename_ite_con))
+                        , sourceFileTmp.size()
+                        , sourceFileTmp.lastModified().toString("yyyy-MM-dd HH:mm:ss")
+                    );
+                    result.emplace_back(catalogFileTmp);
+                }
             }
             if (not eines::signal::isRunning_f())
             {
@@ -177,14 +203,27 @@ std::pair<std::vector<catalogFile_c>,bool> cataloguer_c::catalogDirectory_f(
                         QFileInfo sourceFileTmp(sourceDir.path() + '/' + subfolder_ite_con + '/' + filename_ite_con);
                         if (sourceFileTmp.exists() and sourceFileTmp.isFile())
                         {
-                            catalogFile_c catalogFileTmp
-                            (
-                                  QDir::toNativeSeparators(sourceDir.relativeFilePath(sourceFileTmp.filePath()))
-                                  , sourceFileTmp.size()
-                                  , getFileHash_f(sourceFileTmp.canonicalFilePath())
-                                  , sourceFileTmp.lastModified().toString("yyyy-MM-dd HH:mm:ss")
-                            );
-                            result.emplace_back(catalogFileTmp);
+                            if (generateHash_par_con)
+                            {
+                                catalogFile_c catalogFileTmp
+                                (
+                                      QDir::toNativeSeparators(sourceDir.relativeFilePath(sourceFileTmp.filePath()))
+                                      , sourceFileTmp.size()
+                                      , getFileHash_f(sourceFileTmp.canonicalFilePath())
+                                      , sourceFileTmp.lastModified().toString("yyyy-MM-dd HH:mm:ss")
+                                );
+                                result.emplace_back(catalogFileTmp);
+                            }
+                            else
+                            {
+                                catalogFile_c catalogFileTmp
+                                (
+                                      QDir::toNativeSeparators(sourceDir.relativeFilePath(sourceFileTmp.filePath()))
+                                      , sourceFileTmp.size()
+                                      , sourceFileTmp.lastModified().toString("yyyy-MM-dd HH:mm:ss")
+                                );
+                                result.emplace_back(catalogFileTmp);
+                            }
                         }
                         if (not eines::signal::isRunning_f())
                         {
