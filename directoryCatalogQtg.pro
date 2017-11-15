@@ -50,7 +50,7 @@ CONFIG(debug, debug|release){
     DEFINES += DEBUGJOUVEN
 }
 
-LIBS += -lcriptoQtso -lessentialQtso -lbaseClassQtso -lsignalso -lfileHashQtso -lthreadedFunctionQtso
+LIBS += -lcriptoQtso -lessentialQtso -lsignalso -lfileHashQtso -lthreadedFunctionQtso
 
 QMAKE_CXXFLAGS_DEBUG -= -g
 QMAKE_CXXFLAGS_DEBUG += -pedantic -Wall -Wextra -g3

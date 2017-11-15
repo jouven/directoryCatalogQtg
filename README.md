@@ -9,8 +9,6 @@ Qt library
 
 https://github.com/jouven/criptoQtso
 
-https://github.com/jouven/baseClassQtso
-
 https://github.com/jouven/essentialQtso
 
 https://github.com/jouven/signalso
