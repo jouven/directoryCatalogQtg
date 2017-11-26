@@ -53,7 +53,7 @@ public:
     std::pair<std::vector<catalogFile_c>, bool> catalogDirectory_f(
             const QFileInfo& source_par_con
             , const bool generateHash_par_con = true
-            , const bool useRelativePaths_par_con = true
+            //, const bool useRelativePaths_par_con = true
             , const bool includeSubdirectories_par_con = true
             , const QStringList& filenameFilters_par_con = QStringList()
             , const QString& includeDirectoriesWithFileX_par_con = QString());

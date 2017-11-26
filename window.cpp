@@ -155,7 +155,7 @@ void Window_c::mainLoop_f()
 
 void Window_c::dragEnterEvent(QDragEnterEvent* event)
 {
-    if (event->mimeData()->hasUrls())
+    if (event->mimeData()->hasUrls() and not(saving_pri or generating_pri))
     {
         event->acceptProposedAction();
     }
@@ -210,8 +210,7 @@ void Window_c::browseDirectory_f()
     if (generating_pri or saving_pri)
     {
         statusBarLabel_pri->setText(tr("No browsing while generating a catalog"));
-        QApplication::processEvents();
-        return;
+         return;
     }
 
     QFileDialog selectFolderDialogTmp;
@@ -283,7 +282,6 @@ void Window_c::generateCatalog_f()
     if (generating_pri or saving_pri)
     {
         statusBarLabel_pri->setText(tr("Already generating a catalog"));
-        QApplication::processEvents();
         return;
     }
     QString directoryTmp;
@@ -389,7 +387,7 @@ void Window_c::generateCatalog_f()
                     statusBarLabel_pri->setText(tr("Cataloging...") + " " + cataloguerP->currentDirectory_f());
                     break;
                 }
-                QThread::msleep(500);
+                QThread::msleep(15);
             }
         });
 

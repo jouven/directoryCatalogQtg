@@ -66,9 +66,10 @@ void catalog_c::write_f(QJsonObject& json) const
     json["hashType"] = hashType_pri;
 }
 
-std::pair<std::vector<catalogFile_c>,bool> cataloguer_c::catalogDirectory_f(const QFileInfo& source_par_con
+std::pair<std::vector<catalogFile_c>,bool> cataloguer_c::catalogDirectory_f(
+    const QFileInfo& source_par_con
     , const bool generateHash_par_con
-    , const bool useRelativePaths_par_con
+    //, const bool useRelativePaths_par_con
     , const bool includeSubdirectories_par_con
     , const QStringList& filenameFilters_par_con
     , const QString& includeDirectoriesWithFileX_par_con)
@@ -80,15 +81,7 @@ std::pair<std::vector<catalogFile_c>,bool> cataloguer_c::catalogDirectory_f(cons
         return {result, success};
     }
 
-    QDir sourceDir;
-    if (useRelativePaths_par_con)
-    {
-        sourceDir.setPath(source_par_con.filePath());
-    }
-    else
-    {
-        sourceDir.setPath(source_par_con.absoluteFilePath());
-    }
+    QDir sourceDir(source_par_con.absoluteFilePath());
 
     //if the setting is empty
     //account it as it is found
@@ -122,7 +115,7 @@ std::pair<std::vector<catalogFile_c>,bool> cataloguer_c::catalogDirectory_f(cons
                 {
                     catalogFile_c catalogFileTmp
                     (
-                        QDir::toNativeSeparators(sourceDir.relativeFilePath(sourceDir.path() + '/' + filename_ite_con))
+                        QDir::toNativeSeparators(sourceDir.relativeFilePath(sourceFileTmp.filePath()))
                         , sourceFileTmp.size()
                         , getFileHash_f(sourceFileTmp.canonicalFilePath())
                         , sourceFileTmp.lastModified().toString("yyyy-MM-dd HH:mm:ss")
@@ -133,7 +126,7 @@ std::pair<std::vector<catalogFile_c>,bool> cataloguer_c::catalogDirectory_f(cons
                 {
                     catalogFile_c catalogFileTmp
                     (
-                        QDir::toNativeSeparators(sourceDir.relativeFilePath(sourceDir.path() + '/' + filename_ite_con))
+                        QDir::toNativeSeparators(sourceDir.relativeFilePath(sourceFileTmp.filePath()))
                         , sourceFileTmp.size()
                         , sourceFileTmp.lastModified().toString("yyyy-MM-dd HH:mm:ss")
                     );
@@ -234,6 +227,10 @@ std::pair<std::vector<catalogFile_c>,bool> cataloguer_c::catalogDirectory_f(cons
             }
             subfolders = newSubfoldersTmp;
         }
+    }
+    {
+        QMutexLocker tmp(&currentDirectoryQMutex_pri);
+        currentDirectory_pri.clear();
     }
     success = true;
     return {result, success};
