@@ -35,6 +35,10 @@ Images
 
 ![](../master/images/Screenshot_windows10.PNG)
 
+*Android 5 (Qt 5.9.2)*
+
+![](../master/images/Screenshot_QT592_Android5.png)
+
 Catalog file
 ------------
 ```javascript
