@@ -226,10 +226,13 @@ void Window_c::browseDirectory_f()
 
     selectFolderDialogTmp.setWindowTitle(tr("Select folder"));
     selectFolderDialogTmp.setViewMode(QFileDialog::Detail);
-    selectFolderDialogTmp.setFilter(QDir::Hidden | QDir::NoDotAndDotDot);
+    selectFolderDialogTmp.setFilter(QDir::Hidden | QDir::NoDotAndDotDot | QDir::Files | QDir::AllDirs | QDir::Drives);
     selectFolderDialogTmp.setOption(QFileDialog::DontUseNativeDialog, true);
     //selectFolderDialogTmp.setOption(QFileDialog::ShowDirsOnly, true);
     selectFolderDialogTmp.setOption(QFileDialog::ReadOnly, true);
+#ifdef __ANDROID__
+    selectFolderDialogTmp.setGeometry(QApplication::desktop()->availableGeometry(this));
+#endif
     selectFolderDialogTmp.exec();
 
     if (selectFolderDialogTmp.result() == QDialog::Accepted)
@@ -268,6 +271,7 @@ void Window_c::addDirectoryToCombobox_f(const QString& directory_par_con)
     directoryComboBox_pri->setCurrentIndex(0);
     //directoryComboBox_pri->setCurrentIndex(directoryComboBox_pri->findText(directory_par_con));
 
+#ifndef __ANDROID__
     //it's necessary to wait for the execution to return to the event loop before
     //it can adjustSize properly
     QTimer::singleShot(0,[=]
@@ -275,6 +279,7 @@ void Window_c::addDirectoryToCombobox_f(const QString& directory_par_con)
         //directoryComboBox_pri->adjustSize();
         adjustSize();
     });
+#endif
 }
 
 void Window_c::generateCatalog_f()
@@ -302,9 +307,12 @@ void Window_c::generateCatalog_f()
     saveDialogTmp.selectFile("catalogFile.json");
     saveDialogTmp.setWindowTitle(tr("Save catalog file..."));
     saveDialogTmp.setViewMode(QFileDialog::Detail);
-    saveDialogTmp.setFilter(QDir::Hidden | QDir::NoDotAndDotDot);
+    saveDialogTmp.setFilter(QDir::Hidden | QDir::NoDotAndDotDot | QDir::Files | QDir::AllDirs | QDir::Drives);
     saveDialogTmp.setDefaultSuffix("json");
     saveDialogTmp.setOption(QFileDialog::DontUseNativeDialog, true);
+#ifdef __ANDROID__
+    saveDialogTmp.setGeometry(QApplication::desktop()->availableGeometry(this));
+#endif
     saveDialogTmp.exec();
 
     while (saveDialogTmp.result() == QDialog::Accepted)
