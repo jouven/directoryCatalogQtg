@@ -359,7 +359,7 @@ void Window_c::generateCatalog_f()
             else
             {
 #ifdef Q_OS_WIN32
-                catalog_c catalogTmp(useSlashSeparatorCheckbox_pri->isChecked() ? QDir::toNativeSeparators(directoryTmp) : directoryTmp, catalogTemp.first, "xxhash");
+                catalog_c catalogTmp(useSlashSeparatorCheckbox_pri->isChecked() ? directoryTmp : QDir::toNativeSeparators(directoryTmp), catalogTemp.first, "xxhash");
 #else
                 catalog_c catalogTmp(QDir::toNativeSeparators(directoryTmp), catalogTemp.first, "xxhash");
 #endif
