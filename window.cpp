@@ -358,7 +358,11 @@ void Window_c::generateCatalog_f()
             }
             else
             {
+#ifdef Q_OS_WIN32
+                catalog_c catalogTmp(useSlashSeparatorCheckbox_pri->isChecked() ? QDir::toNativeSeparators(directoryTmp) : directoryTmp, catalogTemp.first, "xxhash");
+#else
                 catalog_c catalogTmp(QDir::toNativeSeparators(directoryTmp), catalogTemp.first, "xxhash");
+#endif
                 QFile saveFile(saveFileName);
                 if (saveFile.open(QIODevice::WriteOnly))
                 {
@@ -377,6 +381,8 @@ void Window_c::generateCatalog_f()
             saving_pri = false;
         });
 
+        //this "works", but it might fail in future versions since it modifies GUI elements in a thread != mainthread
+        //it should be changed to do emits so the changes are done in the main thread (like in hasherQtg)
         threadedFunction_c* funcDisplayProgres = new threadedFunction_c([=]
         {
             while (generating_pri and eines::signal::isRunning_f())
