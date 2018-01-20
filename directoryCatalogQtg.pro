@@ -57,7 +57,7 @@ if (android)
 {
 #release
 CONFIG(release, debug|release){
-    LIBS += -L$${MYPATH}home/jouven/mylibsAndroid/release/
+    LIBS += -L$${MYPATH}home/jouven/mylibsAndroid/release
     DEPENDPATH += $${MYPATH}home/jouven/mylibsAndroid/release
     QMAKE_RPATHDIR += $${MYPATH}home/jouven/mylibsAndroid/release
 }

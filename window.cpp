@@ -72,8 +72,12 @@ Window_c::Window_c()
     centralLayout->addWidget(catalogButton_pri, 1, 1);
     QObject::connect(catalogButton_pri, &QPushButton::clicked, this, &Window_c::generateCatalog_f);
 
-    generateHash_pri = new QCheckBox(tr("Generate hash (slower)"));
-    centralLayout->addWidget(generateHash_pri, 2, 0);
+    generateHashCheckBox_pri = new QCheckBox(tr("Generate hash (slower)"));
+    centralLayout->addWidget(generateHashCheckBox_pri, 2, 0);
+#ifdef Q_OS_WIN32
+    useSlashSeparatorCheckbox_pri = new QCheckBox(tr("Use slash as folder separator"));
+    centralLayout->addWidget(useSlashSeparatorCheckbox_pri, 2, 1);
+#endif
 
     this->setAcceptDrops(true);
 
@@ -341,7 +345,11 @@ void Window_c::generateCatalog_f()
 
         threadedFunction_c* funcGenerateCatalog = new threadedFunction_c([=]
         {
-            auto catalogTemp(cataloguerP->catalogDirectory_f(directoryFI, generateHash_pri->isChecked()));
+#ifdef Q_OS_WIN32
+            auto catalogTemp(cataloguerP->catalogDirectory_f(directoryFI, generateHashCheckBox_pri->isChecked(), useSlashSeparatorCheckbox_pri->isChecked()));
+#else
+            auto catalogTemp(cataloguerP->catalogDirectory_f(directoryFI, generateHashCheckBox_pri->isChecked()));
+#endif
             saving_pri = true;
             generating_pri = false;
             if (not catalogTemp.second)

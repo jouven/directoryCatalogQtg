@@ -11,6 +11,7 @@ class QLabel;
 class QVBoxLayout;
 class QCheckBox;
 
+
 //class browseFileDialogThread_c : public threadedFunction_c
 //{
 //    Q_OBJECT
@@ -36,8 +37,10 @@ class Window_c : public QWidget
     QPushButton* catalogButton_pri;
     QComboBox* directoryComboBox_pri;
     QLabel* statusBarLabel_pri;
-    QCheckBox* generateHash_pri;
-
+    QCheckBox* generateHashCheckBox_pri;
+#ifdef Q_OS_WIN32
+    QCheckBox* useSlashSeparatorCheckbox_pri;
+#endif
     bool generating_pri = false;
     bool saving_pri = false;
 

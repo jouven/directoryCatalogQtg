@@ -70,6 +70,7 @@ std::pair<std::vector<catalogFile_c>,bool> cataloguer_c::catalogDirectory_f(
     const QFileInfo& source_par_con
     , const bool generateHash_par_con
     //, const bool useRelativePaths_par_con
+    , const bool useSlashSeparator_par_con
     , const bool includeSubdirectories_par_con
     , const QStringList& filenameFilters_par_con
     , const QString& includeDirectoriesWithFileX_par_con)
@@ -115,7 +116,7 @@ std::pair<std::vector<catalogFile_c>,bool> cataloguer_c::catalogDirectory_f(
                 {
                     catalogFile_c catalogFileTmp
                     (
-                        QDir::toNativeSeparators(sourceDir.relativeFilePath(sourceFileTmp.filePath()))
+                        useSlashSeparator_par_con ? sourceDir.relativeFilePath(sourceFileTmp.filePath()) : QDir::toNativeSeparators(sourceDir.relativeFilePath(sourceFileTmp.filePath()))
                         , sourceFileTmp.size()
                         , getFileHash_f(sourceFileTmp.canonicalFilePath())
                         , sourceFileTmp.lastModified().toString("yyyy-MM-dd HH:mm:ss")
@@ -126,7 +127,7 @@ std::pair<std::vector<catalogFile_c>,bool> cataloguer_c::catalogDirectory_f(
                 {
                     catalogFile_c catalogFileTmp
                     (
-                        QDir::toNativeSeparators(sourceDir.relativeFilePath(sourceFileTmp.filePath()))
+                        useSlashSeparator_par_con ? sourceDir.relativeFilePath(sourceFileTmp.filePath()) : QDir::toNativeSeparators(sourceDir.relativeFilePath(sourceFileTmp.filePath()))
                         , sourceFileTmp.size()
                         , sourceFileTmp.lastModified().toString("yyyy-MM-dd HH:mm:ss")
                     );
@@ -200,7 +201,7 @@ std::pair<std::vector<catalogFile_c>,bool> cataloguer_c::catalogDirectory_f(
                             {
                                 catalogFile_c catalogFileTmp
                                 (
-                                      QDir::toNativeSeparators(sourceDir.relativeFilePath(sourceFileTmp.filePath()))
+                                      useSlashSeparator_par_con ? sourceFileTmp.filePath() : QDir::toNativeSeparators(sourceDir.relativeFilePath(sourceFileTmp.filePath()))
                                       , sourceFileTmp.size()
                                       , getFileHash_f(sourceFileTmp.canonicalFilePath())
                                       , sourceFileTmp.lastModified().toString("yyyy-MM-dd HH:mm:ss")
@@ -211,7 +212,7 @@ std::pair<std::vector<catalogFile_c>,bool> cataloguer_c::catalogDirectory_f(
                             {
                                 catalogFile_c catalogFileTmp
                                 (
-                                      QDir::toNativeSeparators(sourceDir.relativeFilePath(sourceFileTmp.filePath()))
+                                      useSlashSeparator_par_con ? sourceFileTmp.filePath() : QDir::toNativeSeparators(sourceDir.relativeFilePath(sourceFileTmp.filePath()))
                                       , sourceFileTmp.size()
                                       , sourceFileTmp.lastModified().toString("yyyy-MM-dd HH:mm:ss")
                                 );
