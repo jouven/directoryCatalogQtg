@@ -27,7 +27,7 @@ class QCheckBox;
 //    void resizeEvent(QResizeEvent *e) override;
 //};
 
-class Window_c : public QWidget
+class mainWindow_c : public QWidget
 {
     Q_OBJECT
 
@@ -48,8 +48,8 @@ class Window_c : public QWidget
 
     void closeEvent(QCloseEvent *event) override;
 public:
-    Window_c();
-    ~Window_c();
+    mainWindow_c();
+    ~mainWindow_c();
 private slots:
     void browseDirectory_f();
     void generateCatalog_f();

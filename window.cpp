@@ -13,7 +13,7 @@
 #include <QFile>
 #include <QFileDialog>
 
-void Window_c::closeEvent(QCloseEvent* event)
+void mainWindow_c::closeEvent(QCloseEvent* event)
 {
     if (eines::signal::isRunning_f())
     {
@@ -22,7 +22,7 @@ void Window_c::closeEvent(QCloseEvent* event)
     event->ignore();
 }
 
-Window_c::Window_c()
+mainWindow_c::mainWindow_c()
 {
     statusBarLabel_pri = new QLabel;
     //statusBarLabel_pri->setWordWrap(true);
@@ -63,14 +63,14 @@ Window_c::Window_c()
     browseDirectoryButton_pri = new QPushButton(browseIcon, tr("Browse"));
     //browseDirectoryButton_pri->setFont(defaultButtonFont);
     centralLayout->addWidget(browseDirectoryButton_pri, 1, 0);
-    QObject::connect(browseDirectoryButton_pri, &QPushButton::clicked, this, &Window_c::browseDirectory_f);
+    QObject::connect(browseDirectoryButton_pri, &QPushButton::clicked, this, &mainWindow_c::browseDirectory_f);
 
     //catalog Button
     //QIcon browseIcon = QIcon::fromTheme("document-open", QIcon(":/images/browse.png"));
     catalogButton_pri = new QPushButton(tr("Catalog"));
     //browseDirectoryButton_pri->setFont(defaultButtonFont);
     centralLayout->addWidget(catalogButton_pri, 1, 1);
-    QObject::connect(catalogButton_pri, &QPushButton::clicked, this, &Window_c::generateCatalog_f);
+    QObject::connect(catalogButton_pri, &QPushButton::clicked, this, &mainWindow_c::generateCatalog_f);
 
     generateHashCheckBox_pri = new QCheckBox(tr("Generate hash (slower)"));
     centralLayout->addWidget(generateHashCheckBox_pri, 2, 0);
@@ -90,7 +90,7 @@ Window_c::Window_c()
     //const QRect screenGeometry = QApplication::desktop()->screenGeometry(this);
     //resize(screenGeometry.width() / 3, 0);
     QTimer* mainLoopTimer = new QTimer(qApp);
-    QObject::connect(mainLoopTimer, &QTimer::timeout, this, &Window_c::mainLoop_f);
+    QObject::connect(mainLoopTimer, &QTimer::timeout, this, &mainWindow_c::mainLoop_f);
     mainLoopTimer->start(1000);
 
     if (appConfig_f().configLoaded_f())
@@ -119,7 +119,7 @@ Window_c::Window_c()
     //    });
 }
 
-Window_c::~Window_c()
+mainWindow_c::~mainWindow_c()
 {
     appConfig_f().setWindowGeometry_f(saveGeometry());
     QStringList comboStringsTmp;
@@ -136,7 +136,7 @@ Window_c::~Window_c()
     }
 }
 
-void Window_c::mainLoop_f()
+void mainWindow_c::mainLoop_f()
 {
     //qInfo() << "qThreadCount_f() " << qThreadCount_f() << endl;
 //    qInfo() << "3 statusBar()->sizeHint().width() " << statusBarLabel_pri->sizeHint().width() << endl;
@@ -157,7 +157,7 @@ void Window_c::mainLoop_f()
     }
 }
 
-void Window_c::dragEnterEvent(QDragEnterEvent* event)
+void mainWindow_c::dragEnterEvent(QDragEnterEvent* event)
 {
     if (event->mimeData()->hasUrls() and not(saving_pri or generating_pri))
     {
@@ -165,7 +165,7 @@ void Window_c::dragEnterEvent(QDragEnterEvent* event)
     }
 }
 
-void Window_c::dropEvent(QDropEvent* event)
+void mainWindow_c::dropEvent(QDropEvent* event)
 {
     bool validDirectoryFound(false);
     QString possibleDirectory;
@@ -209,7 +209,7 @@ void Window_c::dropEvent(QDropEvent* event)
 //    browseDirectoryThreadTmp->start();
 //}
 
-void Window_c::browseDirectory_f()
+void mainWindow_c::browseDirectory_f()
 {
     if (generating_pri or saving_pri)
     {
@@ -259,7 +259,7 @@ void Window_c::browseDirectory_f()
     }
 }
 
-void Window_c::addDirectoryToCombobox_f(const QString& directory_par_con)
+void mainWindow_c::addDirectoryToCombobox_f(const QString& directory_par_con)
 {
 //    if (directoryComboBox_pri->findText(directory_par_con) == -1)
 //    {
@@ -286,7 +286,7 @@ void Window_c::addDirectoryToCombobox_f(const QString& directory_par_con)
 #endif
 }
 
-void Window_c::generateCatalog_f()
+void mainWindow_c::generateCatalog_f()
 {
     if (generating_pri or saving_pri)
     {

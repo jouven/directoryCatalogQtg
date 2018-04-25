@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
         locateConfigFilePath_f(commandLineParser, true);
     }
 
-    Window_c window;
+    mainWindow_c window;
     window.show();
     returnValue_ext = qtapp.exec();
 
