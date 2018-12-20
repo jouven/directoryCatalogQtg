@@ -24,7 +24,11 @@ void mainWindow_c::closeEvent(QCloseEvent* event)
 
 mainWindow_c::mainWindow_c()
 {
+    threadedFunction_c::setMaxConcurrentQThreads_f(4);
     statusBarLabel_pri = new QLabel;
+    //none of these fixes the space "trimming" issue on windows when
+    //doing the "cataloging text animation"
+    //statusBarLabel_pri->setTextFormat(Qt::PlainText);
     //statusBarLabel_pri->setWordWrap(true);
 
 //    qInfo() << "1 statusBar()->size().width() " << statusBarLabel_pri->size().width() << endl;
@@ -109,6 +113,8 @@ mainWindow_c::mainWindow_c()
         }
     }
 
+    QObject::connect(this, &mainWindow_c::updateStatusText_signal, this, &mainWindow_c::updateStatusBarText_f);
+
 //    QTimer::singleShot(1,[=]
 //    {
 //        statusBar()->resize(statusBar()->sizeHint().width(),statusBar()->sizeHint().height());
@@ -146,7 +152,7 @@ void mainWindow_c::mainLoop_f()
     //statusBar()->resize(statusBar()->sizeHint().width(),statusBar()->sizeHint().height());
     //adjustSize();
     //updateGeometry();
-    if (finalCounterSeconds_pri == 0 and qThreadCount_f() == 0)
+    if (finalCounterSeconds_pri == 0 and threadedFunction_c::qThreadCount_f() == 0)
     {
         QApplication::exit();
     }
@@ -155,6 +161,11 @@ void mainWindow_c::mainLoop_f()
         statusBarLabel_pri->setText(tr("Exiting..."));
         finalCounterSeconds_pri = finalCounterSeconds_pri - 1;
     }
+}
+
+void mainWindow_c::updateStatusBarText_f(QString newText_par)
+{
+    statusBarLabel_pri->setText(newText_par);
 }
 
 void mainWindow_c::dragEnterEvent(QDragEnterEvent* event)
@@ -354,7 +365,7 @@ void mainWindow_c::generateCatalog_f()
             generating_pri = false;
             if (not catalogTemp.second)
             {
-                statusBarLabel_pri->setText(tr("Generation unsuccessful or aborted"));
+                Q_EMIT updateStatusText_signal(tr("Generation unsuccessful or aborted"));
             }
             else
             {
@@ -366,57 +377,56 @@ void mainWindow_c::generateCatalog_f()
                 QFile saveFile(saveFileName);
                 if (saveFile.open(QIODevice::WriteOnly))
                 {
-                    statusBarLabel_pri->setText(tr("Creating JSON save file..."));
+                    Q_EMIT updateStatusText_signal(tr("Creating JSON save file..."));
                     QJsonObject somethingJson;
                     catalogTmp.write_f(somethingJson);
                     QJsonDocument somethingJsonD(somethingJson);
                     saveFile.write(somethingJsonD.toJson(QJsonDocument::Indented));
-                    statusBarLabel_pri->setText(tr("File saved successfully"));
+                    Q_EMIT updateStatusText_signal(tr("File saved successfully"));
                 }
                 else
                 {
-                    statusBarLabel_pri->setText(tr("Couldn't create the save file"));
+                    Q_EMIT updateStatusText_signal(tr("Couldn't create the save file"));
                 }
             }
             saving_pri = false;
         });
 
-        //this "works", but it might fail in future versions since it modifies GUI elements in a thread != mainthread
-        //it should be changed to do emits so the changes are done in the main thread (like in hasherQtg)
-        threadedFunction_c* funcDisplayProgres = new threadedFunction_c([=]
+        threadedFunction_c* funcDisplayProgress = new threadedFunction_c([=]
         {
-            while (generating_pri and eines::signal::isRunning_f())
+            while (generating_pri)
             {
-                while (eines::signal::isRunning_f() and generating_pri)
+                while (generating_pri)
                 {
-
+                    //WARNING Windows, this issue doesn't happen on Linux, ignores the space literals added,
+                    //the " ", so it missaligns while displaying the calaloging progress
                     if (statusBarLabel_pri->text().startsWith("Cataloging..."))
                     {
-                        statusBarLabel_pri->setText(tr("Cataloging.") + " "" "" " + cataloguerP->currentDirectory_f());
+                        Q_EMIT updateStatusText_signal(tr("Cataloging.") + " "" "" " + cataloguerP->currentDirectory_f());
                         break;
                     }
                     if (statusBarLabel_pri->text().startsWith("Cataloging. "))
                     {
-                        statusBarLabel_pri->setText(tr("Cataloging..") + " "" " + cataloguerP->currentDirectory_f());
+                        Q_EMIT updateStatusText_signal(tr("Cataloging..") + " "" " + cataloguerP->currentDirectory_f());
                         break;
                     }
                     if (statusBarLabel_pri->text().startsWith("Cataloging.. "))
                     {
-                        statusBarLabel_pri->setText(tr("Cataloging...") + " " + cataloguerP->currentDirectory_f());
+                        Q_EMIT updateStatusText_signal(tr("Cataloging...") + " " + cataloguerP->currentDirectory_f());
                         break;
                     }
                     QThread::msleep(1000);
-                    statusBarLabel_pri->setText(tr("Cataloging...") + " " + cataloguerP->currentDirectory_f());
+                    Q_EMIT updateStatusText_signal(tr("Cataloging...") + " " + cataloguerP->currentDirectory_f());
                     break;
                 }
-                QThread::msleep(15);
+                QThread::msleep(30);
             }
         });
 
         generating_pri = true;
 
-        QObject::connect(funcDisplayProgres, &QThread::finished, funcDisplayProgres, &QThread::deleteLater);
-        funcDisplayProgres->start();
+        QObject::connect(funcDisplayProgress, &QThread::finished, funcDisplayProgress, &QThread::deleteLater);
+        funcDisplayProgress->start();
 
         QObject::connect(funcGenerateCatalog, &QThread::finished, funcGenerateCatalog, &QThread::deleteLater);
         QObject::connect(funcGenerateCatalog, &QThread::finished, cataloguerP, &QThread::deleteLater);

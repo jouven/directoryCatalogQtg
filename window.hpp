@@ -50,15 +50,18 @@ class mainWindow_c : public QWidget
 public:
     mainWindow_c();
     ~mainWindow_c();
-private slots:
+private Q_SLOTS:
     void browseDirectory_f();
     void generateCatalog_f();
     void mainLoop_f();
     //void browseDirectoryThreaded_f();
+    void updateStatusBarText_f(QString newText_par);
 private:
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dropEvent(QDropEvent *event) override;
     void addDirectoryToCombobox_f(const QString &directory_par_con);
+Q_SIGNALS:
+    void updateStatusText_signal(QString newText_par);
 };
 
 #endif //DIRECTORYCATALOGQTG_WINDOW_HPP
