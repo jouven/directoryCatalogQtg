@@ -15,9 +15,9 @@
 
 void mainWindow_c::closeEvent(QCloseEvent* event)
 {
-    if (eines::signal::isRunning_f())
+    if (signalso::isRunning_f())
     {
-        eines::signal::stopRunning_f();
+        signalso::stopRunning_f();
     }
     event->ignore();
 }
@@ -136,9 +136,9 @@ mainWindow_c::~mainWindow_c()
     }
     appConfig_f().setRecentlyCataloguedList_f(comboStringsTmp);
     appConfig_f().saveConfigFile_f();
-    if (eines::signal::isRunning_f())
+    if (signalso::isRunning_f())
     {
-        eines::signal::stopRunning_f();
+        signalso::stopRunning_f();
     }
 }
 
@@ -156,7 +156,7 @@ void mainWindow_c::mainLoop_f()
     {
         QApplication::exit();
     }
-    if (not eines::signal::isRunning_f())
+    if (not signalso::isRunning_f())
     {
         statusBarLabel_pri->setText(tr("Exiting..."));
         finalCounterSeconds_pri = finalCounterSeconds_pri - 1;

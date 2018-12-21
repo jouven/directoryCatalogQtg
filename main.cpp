@@ -43,11 +43,11 @@ int main(int argc, char *argv[])
     window.show();
     returnValue_ext = qtapp.exec();
 
-    if (eines::signal::isRunning_f())
+    if (signalso::isRunning_f())
     {
-        eines::signal::stopRunning_f();
+        signalso::stopRunning_f();
     }
-    while (not eines::signal::isTheEnd_f())
+    while (not signalso::isTheEnd_f())
     {}
 
     return returnValue_ext;

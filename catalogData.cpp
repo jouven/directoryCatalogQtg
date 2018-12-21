@@ -134,7 +134,7 @@ std::pair<std::vector<catalogFile_c>,bool> cataloguer_c::catalogDirectory_f(
                     result.emplace_back(catalogFileTmp);
                 }
             }
-            if (not eines::signal::isRunning_f())
+            if (not signalso::isRunning_f())
             {
                 return {result, success};
             }
@@ -219,7 +219,7 @@ std::pair<std::vector<catalogFile_c>,bool> cataloguer_c::catalogDirectory_f(
                                 result.emplace_back(catalogFileTmp);
                             }
                         }
-                        if (not eines::signal::isRunning_f())
+                        if (not signalso::isRunning_f())
                         {
                             return {result, success};
                         }
